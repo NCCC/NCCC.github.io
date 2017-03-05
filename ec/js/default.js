@@ -95,5 +95,5 @@ function initializeClock(id, endtime) {
 // If today is after registration deadline, countdown to camp start
 // If today is between camp dates, show "Easter Camp 2017 is on! See you there!"
 // If today is after camp, countdown to next Easter
-var deadline = new Date(Date.parse("2017-03-26"));
+var deadline = new Date(Date.parse("2017-03-31"));
 initializeClock('clockdiv', deadline);

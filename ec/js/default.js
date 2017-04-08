@@ -78,22 +78,39 @@ function initializeClock(id, endtime) {
   function updateClock() {
     var t = getTimeRemaining(endtime);
 
-    daysSpan.innerHTML = t.days;
-    hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
-    minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
-    secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
+    if(t.total < 0) {
+      var timeToEndOfCamp = getTimeRemaining(endOfCamp);
+      if(timeToEndOfCamp.total <= 0) {
+        showMessage('Easter Camp is over for this year, hope to see you again next year!');
+      } else {
+        showMessage('Easter Camp 2017 is on! Are you there? :-)');
+      }
+    } else {
+      daysSpan.innerHTML = t.days;
+      hoursSpan.innerHTML = ('0' + t.hours).slice(-2);
+      minutesSpan.innerHTML = ('0' + t.minutes).slice(-2);
+      secondsSpan.innerHTML = ('0' + t.seconds).slice(-2);
 
-    if (t.total <= 0) {
-      clearInterval(timeinterval);
+      if (t.total <= 0) {
+        clearInterval(timeinterval);
+      }
     }
   }
 
   updateClock();
   var timeinterval = setInterval(updateClock, 1000);
 }
+
+function showMessage(msg) {
+  var clock = document.getElementById(clockdiv);
+  clock.innerHTML = '<h2>' + msg + '</h2>';
+}
+
 // If today is before registration deadline, countdown to registration
 // If today is after registration deadline, countdown to camp start
 // If today is between camp dates, show "Easter Camp 2017 is on! See you there!"
 // If today is after camp, countdown to next Easter
-var deadline = new Date(Date.parse("2017-03-31"));
-initializeClock('clockdiv', deadline);
+var deadline = new Date(Date.parse("2017-04-14 18:00"));
+var endOfCamp = new Date(Date.parse("2017-04-17 12:30"));
+var clockdiv = 'clockdiv';
+initializeClock(clockdiv, deadline);

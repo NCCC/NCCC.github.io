@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {font-family: Segoe UI, sans-serif;}
+        h1 {color: #777; font-size: 18px;}
+        #schedule {
+            display: grid;
+            grid-template-columns: 2.5em 1fr 1fr 1fr 1fr;
+        }
+        #schedule > div {
+            border-radius: 3px;
+            margin-bottom: 2px;
+            margin-right: 2px;
+            padding: 2px 6px;
+            font-size: 12px;
+        }
+        .hourRow { grid-column: 1 / -1; background-color: #eee; z-index: -1;}
+        .time {grid-column: 1 / 2 }
+        .d1, .d2, .d3, .d4 {
+            z-index: 1;
+        }
+        .d1 { grid-column: 2 / 3 }
+        .d2 { grid-column: 3 / 4 }
+        .d3 { grid-column: 4 / 5 }
+        .d4 { grid-column: 5 / 6 }
+        .meal       { background-color: #fb3;}
+        .program    { background-color: #7DD6E8; }
+        .activity   { background-color: #bf4; }
+        .sleep   { background-color: #aaa; }
+        .free   { background-color: #ddd; opacity: 0.75;}
+        #currentTime {
+            grid-column: 1 / -1;
+            background-color: orange;
+            box-shadow: 0 0 3px 3px orange;
+            opacity: 0.3;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <h1>Easter Camp 2017 Schedule</h1>
+    <div id="schedule">
+        <div class="dinner d1"></div>
+        <div class="dinner d2"></div>
+        <div class="dinner d3"></div>
+    </div>
+    
+    <script>
+        var css = '',
+            head = document.head || document.getElementsByTagName('head')[0],
+            schedule = document.getElementById('schedule'),
+            style = document.createElement('style');
+
+        var gridRows = '',
+            rowHeight = '20px',
+            startTime = 8,
+            endTime = 23,
+            increment = 0.25; // 15 minute increments
+
+        for(var i = startTime; i <= endTime; i += increment) {
+            var hour = Math.floor(i);
+            var minutes = Math.floor((i%1) * 60);
+            minutes = (minutes === 0) ? '00' : minutes;
+            gridRows += "[h" + hour + minutes + "] " + rowHeight + " ";
+            if( minutes === '00' && hour % 2 == 0) {
+                var hourRow = document.createElement('div');
+                hourRow.className = 'hourRow';
+                hourRow.style = 'grid-row: h' + hour + minutes + ' / span 4 ';
+                schedule.appendChild(hourRow);
+            }
+            if( minutes === '00' || minutes === 30) {
+                var timeLabel = document.createElement('div');
+                timeLabel.className = 'time';
+                timeLabel.style = 'grid-row: h' + hour + minutes + ' / span 2';
+                timeLabel.innerText = hour + ':' + minutes;
+                schedule.appendChild(timeLabel);
+            }
+        }
+
+        css = '#schedule { grid-template-rows: ' + gridRows + ';} ';
+
+        style.type = 'text/css';
+        if (style.styleSheet){
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
+
+        head.appendChild(style);
+
+        var type = {
+            meal: 'meal',
+            free: 'free',
+            program: 'program',
+            activity: 'activity',
+            sleep: 'sleep',
+            travel: 'travel'
+        }
+
+        var events = [
+            [ // Day 1: Friday
+                ['Dinner', type.meal, 1830, 1930],
+                ['Break', type.free, 1930, 2000],
+                ['Introduction', type.program, 2000, 2015],
+                ['Games', type.activity, 2015, 2100],
+                ['Group time', type.program, 2100, 2145],
+                ['Evening snacks', type.meal, 2145, 2230],
+                ['Sleep', type.sleep, 2300, 2330]
+            ],
+            [ // Day 2: Saturday
+                ['Breakfast', type.meal, 900, 930],
+                ['Worship', type.program, 945, 1000],
+                ['Session 1', type.program, 1000, 1045],
+                ['Group time', type.program, 1045, 1130],
+                ['Lunch', type.meal, 1200, 1315],
+                ['Break', type.free, 1315, 1500],
+                ['Activity 1', type.activity, 1500, 1700],
+                ['Break', type.free, 1700, 1800],
+                ['Dinner', type.meal, 1800, 1900],
+                ['Worship', type.program, 1930, 1945],
+                ['Session 2', type.program, 1945, 2030],
+                ['Group time + Evening Snacks', type.program, 2030, 2145],
+                ['Sleep', type.sleep, 2300, 2330]
+            ],
+            [ // Day 3: Sunday
+                ['Breakfast', type.meal, 900, 930],
+                ['Worship', type.program, 945, 1000],
+                ['Session 3', type.program, 1000, 1045],
+                ['Group time', type.program, 1045, 1130],
+                ['Lunch', type.meal, 1200, 1315],
+                ['Break', type.free, 1315, 1400],
+                ['Photo session', type.activity, 1400, 1430],
+                ['Activity 2', type.activity, 1430, 1630],
+                ['Dinner', type.meal, 1630, 1730],
+                ['Worship', type.program, 1815, 1845],
+                ['Session 4', type.program, 1845, 1930],
+                ['Evening Snacks', type.meal, 2000, 2045],
+                ['Sleep', type.sleep, 2300, 2330]
+            ],
+            [ // Day 4: Monday
+                ['Breakfast', type.meal, 815, 900],
+                ['Worship', type.program, 900, 915],
+                ['Group time', type.program, 915, 1000],
+                ['Evaluation', type.program, 1000, 1045],
+                ['Packing', type.free, 1045, 1115],
+                ['Lunch box', type.meal, 1115, 1130],
+                ['Leaving the camp', type.travel, 1130, 1200]
+            ]
+        ]
+        for(var j = 0; j < events.length; j++) {
+            var dayClass = 'd'+(j+1);
+            var dayEvents = events[j];
+            for(var k = 0; k < dayEvents.length; k++){
+                var event = dayEvents[k];
+                var text = event[0];
+                var type = event[1];
+                var startTime = 'h' + event[2];
+                var endTime = 'h' + event[3];
+                var eventElement = document.createElement('div');
+                eventElement.classList.add(dayClass);
+                eventElement.classList.add(type);
+                eventElement.innerText = text;
+                eventElement.style = "grid-row: " + startTime + " / " + endTime;
+                schedule.appendChild(eventElement);
+            }
+        }
+
+        var showCurrentTimeMarker = function() {
+            var currentTime = new Date();
+            var hours = currentTime.getHours();
+            var minutes = currentTime.getMinutes();
+            if(hours > 8 && hours < 23) {
+                var flooredMinutes = Math.floor(minutes/15)*15;
+                flooredMinutes = (flooredMinutes === 0) ? '00' : flooredMinutes;
+                var currentStartTime = 'h' + hours + flooredMinutes;
+                var currentTimeElement = document.getElementById('currentTime');
+                if(!currentTimeElement) {
+                    currentTimeElement = document.createElement('div');
+                    currentTimeElement.id = 'currentTime';
+                    schedule.appendChild(currentTimeElement);
+                } 
+                currentTimeElement.style = 'grid-row: ' + currentStartTime + ' / span 1';
+            }
+        }
+        showCurrentTimeMarker();
+        setInterval(showCurrentTimeMarker, 1000*60);
+        
+    </script>
+</body>
+</html>
